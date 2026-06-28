@@ -582,7 +582,7 @@ const LANG_COLORS = {
   Shell: '#89e051', Java: '#b07219', 'C++': '#f34b7d',
   default: '#b07d3a'
 };
-const HIDDEN_REPOS = ['varnika_v_n', 'marketing-ab-test-dashboard', 'machine-learning'];
+const HIDDEN_REPOS = ['varnika_v_n', 'marketing-ab-test-dashboard', 'machine-learning', 'varnika_v_n', 'power-bi-projects', 'python-projects', 'sql_projects'];
 
 function langColor(lang) { return LANG_COLORS[lang] || LANG_COLORS.default; }
 
@@ -623,7 +623,7 @@ async function loadGitHubRepos() {
       'https://api.github.com/users/VarnikaGithub/repos?sort=updated&per_page=30',
       { headers: { Accept: 'application/vnd.github.v3+json' } }
     );
-    if (!res.ok) return; // silently keep hardcoded cards
+    if (!res.ok) return;
     const repos = await res.json();
     const visible = repos.filter(r =>
       !r.fork &&
@@ -631,7 +631,9 @@ async function loadGitHubRepos() {
       r.name.toLowerCase() !== r.owner.login.toLowerCase()
     );
     if (visible.length === 0) return;
-    grid.innerHTML = visible.map(buildCard).join('');
+    // Keep hardcoded top 3, append remaining API repos after
+    const hardcodedHTML = grid.innerHTML;
+    grid.innerHTML = hardcodedHTML + visible.map(buildCard).join('');
   } catch (e) {
     // silently keep hardcoded cards on failure
   }
