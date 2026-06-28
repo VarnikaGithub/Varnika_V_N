@@ -582,7 +582,15 @@ const LANG_COLORS = {
   Shell: '#89e051', Java: '#b07219', 'C++': '#f34b7d',
   default: '#b07d3a'
 };
-const HIDDEN_REPOS = ['varnika_v_n', 'marketing-ab-test-dashboard', 'machine-learning', 'varnika_v_n', 'power-bi-projects', 'python-projects', 'sql_projects'];
+const HIDDEN_REPOS = [
+  'varnika_v_n',
+  'marketing-ab-test-dashboard',
+  'machine-learning',
+  'power-bi-projects',
+  'python-projects',
+  'sql_projects',
+  'power-bi-itsm-dashboard'
+];
 
 function langColor(lang) { return LANG_COLORS[lang] || LANG_COLORS.default; }
 
@@ -618,6 +626,7 @@ function buildCard(repo) {
 
 async function loadGitHubRepos() {
   const grid = document.getElementById('gh-grid');
+  const hardcodedHTML = grid.innerHTML; // save hardcoded cards
   try {
     const res = await fetch(
       'https://api.github.com/users/VarnikaGithub/repos?sort=updated&per_page=30',
@@ -631,8 +640,7 @@ async function loadGitHubRepos() {
       r.name.toLowerCase() !== r.owner.login.toLowerCase()
     );
     if (visible.length === 0) return;
-    // Keep hardcoded top 3, append remaining API repos after
-    const hardcodedHTML = grid.innerHTML;
+    // Always keep hardcoded 3 first, append new API repos after
     grid.innerHTML = hardcodedHTML + visible.map(buildCard).join('');
   } catch (e) {
     // silently keep hardcoded cards on failure
